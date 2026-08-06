@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { HashRouter, Routes, Route } from "react-router-dom";
 import AuthPage from "./pages/AuthPage";
 import Dashboard from "./pages/Dashboard";
 import FarmDetails from "./pages/UserForm";
@@ -9,7 +9,7 @@ import YieldPrediction from "./pages/YieldPrediction";
 import "./App.css";
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route path="/" element={<AuthPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
@@ -19,6 +19,6 @@ export default function App() {
         <Route path="/weather-advisory" element={<WeatherAdvisory />} />
         <Route path="/yield-prediction" element={<YieldPrediction />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
