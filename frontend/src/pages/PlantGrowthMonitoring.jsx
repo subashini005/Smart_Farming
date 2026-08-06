@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { pythonApiBase } from "../config";
 
-const API = "http://localhost:8001";
+const API = pythonApiBase;
 
 export default function PlantGrowthMonitoring() {
 

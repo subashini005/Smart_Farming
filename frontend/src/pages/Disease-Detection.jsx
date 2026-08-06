@@ -1,7 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { pythonApiBase } from "../config";
 
-const API = "http://localhost:8001";
+const API = pythonApiBase;
 
 export default function DiseaseDetection(){
 

@@ -3,8 +3,9 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "boxicons/css/boxicons.min.css";
 import "../Authpage-styles.css";
+import { nodeApiBase } from "../config";
 
-const API = "http://localhost:5000";
+const API = nodeApiBase;
 
 export default function AuthPage() {
   const navigate = useNavigate();
