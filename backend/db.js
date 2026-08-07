@@ -11,6 +11,8 @@ const db = new Loki(dbPath, {
 });
 
 let users;
+let _readyResolve;
+const _readyPromise = new Promise((resolve) => { _readyResolve = resolve; });
 
 function initDB() {
   users = db.getCollection("users");
@@ -22,6 +24,7 @@ function initDB() {
   }
 
   db.saveDatabase();
+  if (typeof _readyResolve === "function") _readyResolve();
 }
 
 function insertUser({ username, email, password }) {
@@ -44,4 +47,4 @@ function markUserVerified(userId) {
   return user;
 }
 
-module.exports = { getUsers: () => users, insertUser, markUserVerified };
+module.exports = { getUsers: () => users, insertUser, markUserVerified, ensureInitialized: () => _readyPromise };

@@ -11,6 +11,8 @@ const db = new Loki(dbPath, {
 });
 
 let otps;
+let _readyResolve;
+const _readyPromise = new Promise((resolve) => { _readyResolve = resolve; });
 
 function initDB() {
   otps = db.getCollection("otps");
@@ -22,6 +24,7 @@ function initDB() {
   }
 
   db.saveDatabase();
+  if (typeof _readyResolve === "function") _readyResolve();
 }
 
 function insertOtp({ userId, otp }) {
@@ -52,4 +55,5 @@ module.exports = {
   insertOtp,
   markOtpVerified,
   getOtpCollection: () => otps,
+  ensureInitialized: () => _readyPromise,
 };

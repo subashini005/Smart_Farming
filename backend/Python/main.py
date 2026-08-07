@@ -7,6 +7,7 @@ from ultralytics import YOLO
 import pandas as pd
 import requests
 import numpy as np
+import uvicorn
 
 app = FastAPI()
 
