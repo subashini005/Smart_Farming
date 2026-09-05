@@ -48,12 +48,14 @@ uvicorn main:app --host 0.0.0.0 --port 8001
 3. Add `vercel.json` in `frontend` with static build settings.
 
 ## Netlify deployment
-1. Create a Netlify site from this repository.
-2. Netlify will use `netlify.toml`, build from `frontend`, and publish `frontend/dist`.
-3. In **Site configuration > Environment variables**, add:
-  - `VITE_NODE_API_URL=https://smart-farming-node.onrender.com`
-  - `VITE_PYTHON_API_URL=https://smart-farming-python.onrender.com`
-4. Use the public URLs of your actual Render services if their names differ.
-5. Redeploy after changing environment variables because Vite injects them during the build.
+1. Deploy both backend services first using `render.yaml`.
+2. Confirm the Node service responds to `/login` and the Python service responds to `/docs`.
+3. Create a Netlify site from this repository.
+4. Netlify will use `netlify.toml`, build from `frontend`, and publish `frontend/dist`.
+5. In **Site configuration > Environment variables**, add the actual public backend URLs:
+  - `VITE_NODE_API_URL=https://<your-node-service>.onrender.com`
+  - `VITE_PYTHON_API_URL=https://<your-python-service>.onrender.com`
+6. Add `EMAIL_USER` and `EMAIL_PASS` to the Node Render service. For Gmail, `EMAIL_PASS` must be an App Password, not the normal account password.
+7. Redeploy Netlify after changing environment variables because Vite injects them during the build.
 
 The frontend uses `HashRouter`, so the Netlify SPA redirect is included for direct route access. Never commit `frontend/.env` or `backend/.env`; use the example files as templates only.
