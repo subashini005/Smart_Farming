@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { pythonApiBase } from "../config";
+import { useLanguage } from "../LanguageContext";
 
 const API = pythonApiBase;
 
@@ -12,6 +13,7 @@ const [waterLevel,setWaterLevel]=useState("")
 const [actualHeight,setActualHeight]=useState("")
 const [result,setResult]=useState(null)
 const [loading,setLoading]=useState(false)
+const { t, translateBackend } = useLanguage()
 
 const checkGrowth = async()=>{
 try{
@@ -39,7 +41,7 @@ setResult({
 })
 }
 catch(err){
-    alert("server error")
+    alert(t("serverError"))
 }
 finally{
     setLoading(false)
@@ -48,45 +50,45 @@ finally{
 return(
     <div className="plant-growth-container">
         <div className="plant-growth-card">
-            <h2 className="title">🌱 Smart Plant Growth Monitoring</h2>
-            <input type="number" placeholder="Days after planting" onChange={e=>setDays(e.target.value)}/>
-            <input type="number" placeholder="Temperature (°C)" onChange={e=>setTemperature(e.target.value)}/>
-            <input type="number" placeholder="Soil Moisture (%)" onChange={e=>setSoilMoisture(e.target.value)}/>
-            <input type="number" placeholder="Water Level (li)" onChange={e=>setWaterLevel(e.target.value)}/>
-            <input type="number" placeholder="Actual Height (cm)" onChange={e=>setActualHeight(e.target.value)}/>
-            <button onClick={checkGrowth} className="primary-btn">{loading ? "Predicting..." : "Analyze Growth"}</button>
+            <h2 className="title">🌱 {t("growthTitle")}</h2>
+            <input type="number" placeholder={t("daysAfterPlanting")} onChange={e=>setDays(e.target.value)}/>
+            <input type="number" placeholder={t("temperature")} onChange={e=>setTemperature(e.target.value)}/>
+            <input type="number" placeholder={t("soilMoisture")} onChange={e=>setSoilMoisture(e.target.value)}/>
+            <input type="number" placeholder={t("waterLevel")} onChange={e=>setWaterLevel(e.target.value)}/>
+            <input type="number" placeholder={t("actualHeight")} onChange={e=>setActualHeight(e.target.value)}/>
+            <button onClick={checkGrowth} className="primary-btn">{loading ? t("predicting") : t("analyzeGrowth")}</button>
         </div>
         {result && (
             <div className={`result-card ${result.status==="Below Standard"?"error":"success"}`}>
-                <h3>Expected Growth : {result.expected} cm</h3>
-                <h3>Actual Growth : {result.actual} cm</h3>
-                <p><b>Status :</b> {result.status}</p>
+                <h3>{t("expectedGrowth")} : {result.expected} cm</h3>
+                <h3>{t("actualGrowth")} : {result.actual} cm</h3>
+                <p><b>{t("status")} :</b> {translateBackend(result.status)}</p>
                 {result.reasons && (
                     <>
-                        <p><b>Growth Analysis :</b></p>
+                        <p><b>{t("growthAnalysis")} :</b></p>
                         <ul>
                             {result.reasons.map((item,index)=>(
-                                <li key={index}>{item}</li>
+                                <li key={index}>{translateBackend(item)}</li>
                             ))}
                         </ul>
                     </>
                 )}
                 {result.improvements && result.improvements.length > 0 && (
                     <>
-                        <p><b>How to Improve :</b></p>
+                        <p><b>{t("improve")} :</b></p>
                         <ul>
                             {result.improvements.map((item,index)=>(
-                                <li key={index}>{item}</li>
+                                <li key={index}>{translateBackend(item)}</li>
                             ))}
                         </ul>
                     </>
                 )}
                 {result.maintain && result.maintain.length > 0 && (
                     <>
-                        <p><b>How to Maintain :</b></p>
+                        <p><b>{t("maintain")} :</b></p>
                         <ul>
                             {result.maintain.map((item,index)=>(
-                                <li key={index}>{item}</li>
+                                <li key={index}>{translateBackend(item)}</li>
                             ))}
                         </ul>
                     </>

@@ -1,6 +1,7 @@
 import {useState} from "react"
 import axios from "axios"
 import { pythonApiBase } from "../config"
+import { useLanguage } from "../LanguageContext"
 
 const API=pythonApiBase
 
@@ -37,6 +38,7 @@ export default function YieldPrediction(){
 const [form,setForm]=useState({})
 const [result,setResult]=useState(null)
 const [loading,setLoading]=useState(false)
+const { t, translateBackend } = useLanguage()
 
 const predict=async()=>{
 try{
@@ -61,62 +63,62 @@ const getYieldClass = () => {
 return(
     <div className="yield-container">
         <div className="yield-card">
-            <h2 className="title">🌾 Smart Farm Yield Analysis</h2>
+            <h2 className="title">🌾 {t("yieldTitle")}</h2>
             <div className="form-grid">
-                <input placeholder="Temperature (°C)" onChange={e=>setForm({...form,temperature:+e.target.value})}/>
-                <input placeholder="Humidity (%)" onChange={e=>setForm({...form,humidity:+e.target.value})}/>
-                <input placeholder="Rainfall (li)" onChange={e=>setForm({...form,rainfall:+e.target.value})}/>
-                <input placeholder="Soil PH" onChange={e=>setForm({...form,ph:+e.target.value})}/>
-                <input placeholder="Nitrogen" onChange={e=>setForm({...form,nitrogen:+e.target.value})}/>
-                <input placeholder="Farm Area (Acre)" onChange={e=>setForm({...form,area:+e.target.value})}/>
-                <input list="districts" placeholder="Select District" onChange={e=>setForm({...form,district:e.target.value})}/>
-                <datalist id="districts">
+                <input type="number" placeholder={t("temperature")} onChange={e=>setForm({...form,temperature:+e.target.value})}/>
+                <input type="number" placeholder={t("humidity")} onChange={e=>setForm({...form,humidity:+e.target.value})}/>
+                <input type="number" placeholder={`${t("rainfall")} (${t("unitMm")}, ${t("example")}: 800)`} onChange={e=>setForm({...form,rainfall:+e.target.value})}/>
+                <input type="number" step="0.1" placeholder={`${t("soilPh")} (${t("example")}: 6.5)`} onChange={e=>setForm({...form,ph:+e.target.value})}/>
+                <input type="number" placeholder={`${t("nitrogen")} (${t("unitKgPerAcre")}, ${t("example")}: 80)`} onChange={e=>setForm({...form,nitrogen:+e.target.value})}/>
+                <input type="number" placeholder={`${t("farmArea")} (${t("example")}: 2)`} onChange={e=>setForm({...form,area:+e.target.value})}/>
+                <select defaultValue="" aria-label={t("selectDistrict")} onChange={e=>setForm({...form,district:e.target.value})}>
+                    <option value="" disabled>{t("selectDistrict")}</option>
                     {districts.map((d,i)=>(
                         <option key={i} value={d}/>
                     ))}
-                </datalist>
-                <input list="seasons" placeholder="Select Season" onChange={e=>setForm({...form,season:e.target.value})}/>
-                <datalist id="seasons">
+                </select>
+                <select defaultValue="" aria-label={t("selectSeason")} onChange={e=>setForm({...form,season:e.target.value})}>
+                    <option value="" disabled>{t("selectSeason")}</option>
                     {seasons.map((d,i)=>(
-                        <option key={i} value={d}/>
+                        <option key={i} value={d}>{translateBackend(d)}</option>
                     ))}
-                </datalist>
-                <input list="pesticides" placeholder="Select Pesticide" onChange={e=>setForm({...form,pesticide:e.target.value})}/>
-                <datalist id="pesticides">
+                </select>
+                <select defaultValue="" aria-label={t("selectPesticide")} onChange={e=>setForm({...form,pesticide:e.target.value})}>
+                    <option value="" disabled>{t("selectPesticide")}</option>
                     {pesticides.map((d,i)=>(
-                        <option key={i} value={d}/>
+                        <option key={i} value={d}>{translateBackend(d)}</option>
                     ))}
-                </datalist>
-                <input list="fertilizers" placeholder="Select Fertilizer" onChange={e=>setForm({...form,fertilizer:e.target.value})}/>
-                <datalist id="fertilizers">
+                </select>
+                <select defaultValue="" aria-label={t("selectFertilizer")} onChange={e=>setForm({...form,fertilizer:e.target.value})}>
+                    <option value="" disabled>{t("selectFertilizer")}</option>
                     {fertilizers.map((d,i)=>(
-                        <option key={i} value={d}/>
+                        <option key={i} value={d}>{translateBackend(d)}</option>
                     ))}
-                </datalist>
+                </select>
             </div>
-            <button className="primary-btn" onClick={predict}>{loading ? "Analyzing..." : "Analyze Farm"}</button>
+            <button className="primary-btn" onClick={predict}>{loading ? t("analyzing") : t("predictYield")}</button>
         </div>
         {result && (
             <div className={`result-card ${getYieldClass()}`}>
-                <h2>Expected Yield : {result.expected_yield}</h2>
-                <p><strong>Yield Level :</strong> {result.yield_level}</p>
-                <p><strong>Recommendation :</strong> {result.recommendation}</p>
+                <h2>{t("expectedYield")} : {result.expected_yield}</h2>
+                <p><strong>{t("yieldLevel")} :</strong> {translateBackend(result.yield_level)}</p>
+                <p><strong>{t("recommendation")} :</strong> {translateBackend(result.recommendation)}</p>
                 {result.positive_factors && (
                     <>
-                        <h3>🌱 Why this yield?</h3>
+                        <h3>🌱 {t("whyYield")}</h3>
                         <ul>
                             {result.positive_factors.map((item,index)=>(
-                                <li key={index}>{item}</li>
+                                <li key={index}>{translateBackend(item)}</li>
                             ))}
                         </ul>
                     </>
                 )}
                 {result.next_improvements && result.next_improvements.length > 0 && (
                     <>
-                        <h3>🚀 How to Increase Yield In Future</h3>
+                        <h3>🚀 {t("increaseYield")}</h3>
                         <ul>
                             {result.next_improvements.map((item,index)=>(
-                                <li key={index}>{item}</li>
+                                <li key={index}>{translateBackend(item)}</li>
                             ))}
                         </ul>
                     </>

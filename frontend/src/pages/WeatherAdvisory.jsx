@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { pythonApiBase } from "../config";
+import { useLanguage } from "../LanguageContext";
 
 const API = pythonApiBase;
 
@@ -8,10 +9,11 @@ export default function WeatherAdvisory() {
   const [district, setDistrict] = useState("");
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const { t, translateBackend } = useLanguage();
 
   const analyzeWeather = async () => {
     if (!district) {
-      alert("Please enter district name");
+      alert(t("enterDistrict"));
       return;
     }
     try {
@@ -23,7 +25,7 @@ export default function WeatherAdvisory() {
       setResult(res.data);
     } catch (err) {
       console.error(err);
-      alert("Error fetching weather data");
+      alert(t("errorFetchingWeather"));
     } finally {
       setLoading(false);
     }
@@ -32,32 +34,32 @@ export default function WeatherAdvisory() {
   return (
     <div className="weather-container">
       <div className="weather-card">
-        <h2 className="title">🌦 Smart Plant Risk Monitoring</h2>
-        <input type="text" placeholder="Enter District (e.g., Salem)" value={district} onChange={(e) => setDistrict(e.target.value)}/>
-        <button className="primary-btn" onClick={analyzeWeather}>{loading ? "Analyzing Weather..." : "Analyze Plant Risk"}</button>
+        <h2 className="title">🌦 {t("weatherTitle")}</h2>
+        <input type="text" placeholder={t("enterDistrict")} value={district} onChange={(e) => setDistrict(e.target.value)}/>
+        <button className="primary-btn" onClick={analyzeWeather}>{loading ? t("analyzingWeather") : t("analyzeRisk")}</button>
       </div>
       {loading && (
         <div className="card placeholder">
-          Fetching live weather & analyzing plant risks...
+          {t("fetchingWeather")}
         </div>
       )}
       {result && (
         <div className="result-card">
-          <h3>📍 District: {result.district}</h3>
+          <h3>📍 {t("districtResult")}: {result.district}</h3>
           <div className="weather-grid">
-            <p>🌡 <strong>Temperature:</strong> {result.temperature ?? "N/A"}</p>
-            <p>💧 <strong>Humidity:</strong> {result.humidity ?? "N/A"}</p>
-            <p>🌧 <strong>Rainfall:</strong> {result.rainfall ?? "N/A"}</p>
-            <p>💨 <strong>Wind Speed:</strong> {result.wind_speed ?? "N/A"}</p>
+            <p>🌡 <strong>{t("temperature")}:</strong> {result.temperature ?? "N/A"}</p>
+            <p>💧 <strong>{t("humidity")}:</strong> {result.humidity ?? "N/A"}</p>
+            <p>🌧 <strong>{t("rainfall")}:</strong> {result.rainfall ?? "N/A"}</p>
+            <p>💨 <strong>{t("windSpeed")}:</strong> {result.wind_speed ?? "N/A"}</p>
           </div>
           <br />
-          <h3>🌿 Plant Risk Analysis</h3>
+          <h3>🌿 {t("riskAnalysis")}</h3>
           {Array.isArray(result.plant_risk_analysis) && result.plant_risk_analysis.length > 0 ? (
             result.plant_risk_analysis.map((risk, index) => {
               if (typeof risk === "string") {
                 return (
                   <div key={index} className="risk-card success">
-                    <h4>{risk}</h4>
+                    <h4>{translateBackend(risk)}</h4>
                   </div>
                 );
               }
@@ -66,15 +68,15 @@ export default function WeatherAdvisory() {
                     risk.level === "High" ? "error" : risk.level === "Medium" ? "warning" : "success"
                   }`}
                 >
-                  <h4>{risk.risk_type || "Risk"}</h4>
-                  <p><strong>Risk Level:</strong> {risk.level || "Unknown"}</p>
-                  <p><strong>Impact:</strong> {risk.description || "-"}</p>
-                  <p><strong>Prevention:</strong> {risk.prevention || "-"}</p>
+                    <h4>{translateBackend(risk.risk_type) || "Risk"}</h4>
+                  <p><strong>{t("riskLevel")}:</strong> {translateBackend(risk.level) || "Unknown"}</p>
+                  <p><strong>{t("impact")}:</strong> {translateBackend(risk.description) || "-"}</p>
+                  <p><strong>{t("prevention")}:</strong> {translateBackend(risk.prevention) || "-"}</p>
                 </div>
               );
             })
           ) : (
-            <p>No plant risk data available</p>
+            <p>{t("noRiskData")}</p>
           )}
         </div>
       )}

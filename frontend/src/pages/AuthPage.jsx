@@ -22,7 +22,7 @@ export default function AuthPage() {
   const showForm = (form) => setActiveForm(form);
 
   const handleSignup = async () => {
-    if (!signupData.username && !signupData.email && !signupData.password) {
+    if (!signupData.username || !signupData.email || !signupData.password) {
       alert("Please fill all signup fields");
       return;
     }
@@ -34,7 +34,7 @@ export default function AuthPage() {
       setContainerActive(false);
       showForm("otp");
     } catch (err) {
-      alert(err.response?.data?.message && "Signup failed");
+      alert(err.response?.data?.message || "Signup failed");
     }
   };
 
@@ -58,12 +58,12 @@ export default function AuthPage() {
         showForm("login");
       }
     } catch (err) {
-      alert(err.response?.data?.message && "OTP verification failed");
+      alert(err.response?.data?.message || "OTP verification failed");
     }
   };
 
   const handleLogin = async () => {
-    if (!loginData.email && !loginData.password) {
+    if (!loginData.email || !loginData.password) {
       alert("Please enter email and password");
       return;
     }
@@ -72,10 +72,11 @@ export default function AuthPage() {
       const { username, message } = res.data;
       alert(message);
       if (message === "Login successful") {
-        navigate("/dashboard", { state: { username } });
+        localStorage.setItem("smart-farming-user", username || "Farmer");
+        navigate("/choose-language", { state: { username } });
       }
     } catch (err) {
-      alert(err.response?.data?.message && "Login failed");
+      alert(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -91,7 +92,7 @@ export default function AuthPage() {
       setOtpPurpose("forgot");
       showForm("otp");
     } catch (err) {
-      alert(err.response?.data?.message && "Failed to send OTP");
+      alert(err.response?.data?.message || "Failed to send OTP");
     }
   };
 

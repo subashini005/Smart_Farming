@@ -38,8 +38,8 @@ jobs:
       - name: Build
         run: npm run build
         env:
-          VITE_NODE_API_URL: https://your-node-backend-url.example
-          VITE_PYTHON_API_URL: https://your-python-backend-url.example
+          VITE_NODE_API_URL: ${{ vars.VITE_NODE_API_URL || 'https://smart-farming-node.onrender.com' }}
+          VITE_PYTHON_API_URL: ${{ vars.VITE_PYTHON_API_URL || 'https://smart-farming-python.onrender.com' }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
