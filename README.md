@@ -3,7 +3,7 @@
 This project contains:
 - A React frontend for the smart farming dashboard and AI features.
 - A Node.js backend for authentication and OTP-based account flows.
-- A FastAPI Python service for soil sutability, disease detection, yield prediction, growth monitoring, and weather advisory.
+- A FastAPI Python service for soil suitability, disease detection, yield prediction, growth monitoring, and weather advisory.
 
 ## Local development
 
@@ -24,23 +24,30 @@ node server.js
 ### Python backend
 ```bash
 cd backend/Python
-pip install -r ../../requirements.txt
+pip install -r requirements.txt
 uvicorn main:app --host 0.0.0.0 --port 8001
 ```
 
 ## Deployment notes
-- Set the frontend environment variables:
-  - VITE_NODE_API_URL
-  - VITE_PYTHON_API_URL
+- GitHub Pages serves only the built frontend; deploy the Node.js and Python APIs separately.
 - The Node backend uses the port from the `PORT` environment variable.
 - The Python backend should be exposed on the same `PORT` or via a separate process depending on the hosting platform.
 
+## GitHub Pages deployment
+The GitHub Actions workflow builds the frontend with relative asset paths, so it works at the project URL `/Smart_Farming/`.
+
+Deploy the Node.js and Python services from `render.yaml` first. In the repository's **Settings > Secrets and variables > Actions > Variables**, set:
+- `VITE_NODE_API_URL` to the public Node service URL (for example, `https://smart-farming-node.onrender.com`).
+- `VITE_PYTHON_API_URL` to the public Python service URL (for example, `https://smart-farming-python.onrender.com`).
+
+The workflow uses those Render URLs as defaults. If your Render service URLs differ, set the variables and rerun the **Deploy frontend to GitHub Pages** workflow so Vite embeds the correct URLs.
+
 ## Render deployment
-1. Add `render.yaml` to the repository.
-2. Deploy two services:
+1. Create a Render Blueprint from this repository's `render.yaml`.
+2. Deploy the two services:
    - `smart-farming-node` using `backend` as `rootDir`, `npm install` and `npm start`.
    - `smart-farming-python` using `backend/Python` as `rootDir`, `pip install -r requirements.txt` and `uvicorn main:app --host 0.0.0.0 --port $PORT`.
-3. Add `EMAIL_USER`, `EMAIL_PASS`, and other sensitive vars to each Render service as environment variables.
+3. Add `EMAIL_USER`, `EMAIL_PASS`, and other required secrets to the Node Render service as environment variables.
 
 ## Vercel deployment
 1. Deploy the `frontend` folder to Vercel.
