@@ -19,6 +19,22 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+async def root():
+    return {
+        "service": "smart-farming-python",
+        "status": "ok",
+        "message": "Python backend is running"
+    }
+
+@app.get("/health")
+async def health():
+    return {
+        "service": "smart-farming-python",
+        "status": "healthy",
+        "timestamp": __import__("datetime").datetime.utcnow().isoformat() + "Z"
+    }
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, "models")
 DATASET_DIR = os.path.join(BASE_DIR, "datasets")

@@ -10,6 +10,24 @@ const { signup, verifyOtp, login, forgotPassword, resetPassword } = require("./c
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+app.get("/", (req, res) => {
+  res.json({
+    service: "smart-farming-node",
+    status: "ok",
+    message: "Node backend is running"
+  });
+});
+
+app.get("/health", (req, res) => {
+  res.json({
+    service: "smart-farming-node",
+    status: "healthy",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.post("/signup", signup);
 app.post("/verify-otp", verifyOtp);
 app.post("/login", login);
